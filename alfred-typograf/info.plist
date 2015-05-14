@@ -49,7 +49,7 @@
 				<key>escaping</key>
 				<integer>68</integer>
 				<key>script</key>
-				<string>echo "{query}" | /usr/bin/python typograf.py</string>
+				<string>echo -n "{query}" | /usr/bin/python typograf.py</string>
 				<key>type</key>
 				<integer>0</integer>
 			</dict>
