@@ -40,6 +40,9 @@ def process(text):
         conn.close()
         result = root.findtext(".//{http://typograf.artlebedev.ru/webservices/}ProcessTextResult")
         result = result.replace("<br />\n", "\n")
+        # АПИ Типографа возвращает текст с дополнительным переводом строки
+        if result[-1] == "\n":
+            result = result[:-1]
         return result
     else:
         conn.close()
