@@ -8,9 +8,10 @@ from __future__ import print_function
 
 import sys
 
-import xml.etree.ElementTree as ET
+import cgi
 import httplib, urllib
 import unicodedata
+import xml.etree.ElementTree as ET
 
 def process(text):
     headers = {"Content-type": "application/xml"}
@@ -21,7 +22,7 @@ def process(text):
         <ProcessText xmlns="http://typograf.artlebedev.ru/webservices/">
             <text>{text}</text>
             <entityType>3</entityType>
-            <useBr>0</useBr>
+            <useBr>1</useBr>
             <useP>0</useP>
             <maxNobr>3</maxNobr>
         </ProcessText>
@@ -30,13 +31,16 @@ def process(text):
 
     conn = httplib.HTTPConnection("typograf.artlebedev.ru")
     conn.request("POST", "/webservices/typograf.asmx",
-                 template.format(text=text).encode('utf-8'),
+                 template.format(text=cgi.escape(text)).encode('utf-8'),
                  headers)
     response = conn.getresponse()
     if response.status == 200:
-        root = ET.fromstring(response.read())
+        xml = response.read()
+        root = ET.fromstring(xml)
         conn.close()
-        return root.findtext(".//{http://typograf.artlebedev.ru/webservices/}ProcessTextResult")
+        result = root.findtext(".//{http://typograf.artlebedev.ru/webservices/}ProcessTextResult")
+        result = result.replace("<br />\n", "\n")
+        return result
     else:
         conn.close()
         return text
